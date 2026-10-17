@@ -1,11 +1,25 @@
-import { Container, Nav, Navbar } from 'react-bootstrap'
-import { NavLink } from 'react-router-dom'
+import { useState } from 'react'
+import { Button, Container, Form, Nav, Navbar, NavDropdown } from 'react-bootstrap'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { useCarrito } from '../context/CarritoContext'
+import { formatearPrecio, obtenerCategorias } from '../data/datos'
 
 function AppNavbar() {
+  const [busqueda, setBusqueda] = useState('')
+  const { total, totalProductos } = useCarrito()
+  const navigate = useNavigate()
+  const categorias = obtenerCategorias()
+
+  // Al buscar, vamos a /productos?q=texto y ProductosView filtra la lista
+  function buscar(event) {
+    event.preventDefault()
+    navigate(`/productos?q=${encodeURIComponent(busqueda.trim())}`)
+  }
+
   return (
-    <Navbar className="navbar-cafe" data-bs-theme="dark" expand="lg">
+    <Navbar className="navbar-cafe" data-bs-theme="dark" expand="lg" sticky="top">
       <Container>
-        <Navbar.Brand as={NavLink} to="/">
+        <Navbar.Brand as={Link} to="/">
           ☕ Café Aroma
         </Navbar.Brand>
 
@@ -13,12 +27,38 @@ function AppNavbar() {
 
         <Navbar.Collapse id="menu-principal">
           <Nav className="me-auto">
-            <Nav.Link as={NavLink} to="/">Inicio</Nav.Link>
-            <Nav.Link as={NavLink} to="/menu">Menú</Nav.Link>
-            <Nav.Link as={NavLink} to="/reserva">Reserva</Nav.Link>
+            <Nav.Link as={NavLink} to="/" end>Inicio</Nav.Link>
+            <Nav.Link as={NavLink} to="/productos">Productos</Nav.Link>
+            <NavDropdown title="Categorías" id="menu-categorias">
+              {categorias.map((categoria) => (
+                <NavDropdown.Item as={Link} to={`/categorias/${categoria.id}`} key={categoria.id}>
+                  {categoria.emoji} {categoria.nombre}
+                </NavDropdown.Item>
+              ))}
+              <NavDropdown.Divider />
+              <NavDropdown.Item as={Link} to="/categorias">Ver todas</NavDropdown.Item>
+            </NavDropdown>
+            <Nav.Link as={NavLink} to="/ofertas">Ofertas</Nav.Link>
             <Nav.Link as={NavLink} to="/nosotros">Nosotros</Nav.Link>
+            <Nav.Link as={NavLink} to="/blog">Blog</Nav.Link>
             <Nav.Link as={NavLink} to="/contacto">Contacto</Nav.Link>
           </Nav>
+
+          <Form className="d-flex my-2 my-lg-0 me-lg-2" onSubmit={buscar} role="search">
+            <Form.Control
+              type="search"
+              placeholder="Buscar..."
+              aria-label="Buscar productos"
+              value={busqueda}
+              onChange={(event) => setBusqueda(event.target.value)}
+              className="me-2"
+            />
+            <Button type="submit" variant="outline-light">Buscar</Button>
+          </Form>
+
+          <Button as={Link} to="/carrito" variant="success">
+            🛒 Carrito ({totalProductos}) {formatearPrecio(total)}
+          </Button>
         </Navbar.Collapse>
       </Container>
     </Navbar>
