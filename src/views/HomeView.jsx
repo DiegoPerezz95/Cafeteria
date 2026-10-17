@@ -1,38 +1,50 @@
-import { Alert, Col, Row } from 'react-bootstrap'
-import ContadorTazas from '../components/ContadorTazas'
+import { Button, Carousel, Col, Row } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
+import CategoriaCard from '../components/CategoriaCard'
+import ListaProductos from '../components/ListaProductos'
+import { obtenerCategorias, obtenerDestacados } from '../data/datos'
+
+const banners = [
+  { emoji: '☕', titulo: 'Café de especialidad', texto: 'Tostado en casa cada semana.' },
+  { emoji: '🥧', titulo: 'Nuevo kuchen de frambuesa', texto: 'Míralo en la sección de ofertas.' },
+  { emoji: '🧋', titulo: 'Bebidas frías', texto: 'Para los días de calor.' },
+]
 
 function HomeView() {
+  const categorias = obtenerCategorias()
+  const destacados = obtenerDestacados()
+
   return (
-    <section className="view-box view-green">
-      <div className="area-label">Vista: HomeView.jsx</div>
+    <>
+      <Carousel className="mb-5 banner-cafe">
+        {banners.map((banner) => (
+          <Carousel.Item key={banner.titulo}>
+            <div className="banner-slide">
+              <span className="banner-emoji">{banner.emoji}</span>
+            </div>
+            <Carousel.Caption>
+              <h3>{banner.titulo}</h3>
+              <p>{banner.texto}</p>
+            </Carousel.Caption>
+          </Carousel.Item>
+        ))}
+      </Carousel>
 
-      <h1>Bienvenidos a Café Aroma</h1>
-      <p>Café de especialidad, pastelería casera y un lugar tranquilo para estudiar.</p>
-
-      <Alert variant="success">
-        Revisa nuestro menú y reserva tu mesa desde la página de Reserva.
-      </Alert>
-
-      <Row className="g-3">
-        <Col md={7}>
-          <div className="component-box component-green">
-            <div className="area-label">Componente visual dentro de la vista</div>
-            <h4>Horario de atención</h4>
-            <ul className="mb-0">
-              <li>Lunes a viernes: 08:00 a 20:00</li>
-              <li>Sábado: 09:00 a 18:00</li>
-              <li>Domingo: 10:00 a 14:00</li>
-              <li>Wifi gratis para clientes</li>
-              <li>Opciones sin lactosa y veganas</li>
-            </ul>
-          </div>
-        </Col>
-
-        <Col md={5}>
-          <ContadorTazas />
-        </Col>
+      <h2 className="text-center mb-3">Categorías</h2>
+      <Row xs={2} md={4} className="g-3 mb-5">
+        {categorias.map((categoria) => (
+          <Col key={categoria.id}>
+            <CategoriaCard categoria={categoria} />
+          </Col>
+        ))}
       </Row>
-    </section>
+
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2 className="mb-0">Destacados</h2>
+        <Button as={Link} to="/productos" variant="outline-dark">Ver todos</Button>
+      </div>
+      <ListaProductos productos={destacados} />
+    </>
   )
 }
 

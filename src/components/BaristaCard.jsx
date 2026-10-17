@@ -2,9 +2,7 @@ import { Card } from 'react-bootstrap'
 
 function BaristaCard({ barista }) {
   return (
-    <Card className="component-box component-green h-100">
-      <div className="area-label">Componente: BaristaCard</div>
-
+    <Card className="h-100 text-center shadow-sm">
       <Card.Body>
         <div className="barista-emoji">{barista.emoji}</div>
         <Card.Title>{barista.nombre}</Card.Title>

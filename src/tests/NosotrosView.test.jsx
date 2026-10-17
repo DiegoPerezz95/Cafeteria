@@ -8,5 +8,5 @@ test('muestra una tarjeta por cada integrante del equipo', () => {
   expect(screen.getByText('Valentina')).toBeInTheDocument()
   expect(screen.getByText('Matías')).toBeInTheDocument()
   expect(screen.getByText('Josefa')).toBeInTheDocument()
-  expect(screen.getAllByText('Componente: BaristaCard')).toHaveLength(3)
+  expect(screen.getAllByText(/especialidad:/i)).toHaveLength(3)
 })
