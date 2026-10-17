@@ -9,6 +9,12 @@ import NosotrosView from './views/NosotrosView'
 import BlogView from './views/BlogView'
 import DetalleBlogView from './views/DetalleBlogView'
 import ContactoView from './views/ContactoView'
+import LoginView from './views/LoginView'
+import RegistroView from './views/RegistroView'
+import CarritoView from './views/CarritoView'
+import CheckoutView from './views/CheckoutView'
+import PagoExitosoView from './views/PagoExitosoView'
+import PagoErrorView from './views/PagoErrorView'
 import NoEncontradoView from './views/NoEncontradoView'
 
 function App() {
@@ -26,6 +32,17 @@ function App() {
         <Route path="/blog" element={<BlogView />} />
         <Route path="/blog/:id" element={<DetalleBlogView />} />
         <Route path="/contacto" element={<ContactoView />} />
+
+        {/* Usuarios */}
+        <Route path="/login" element={<LoginView />} />
+        <Route path="/registro" element={<RegistroView />} />
+
+        {/* Proceso de compra */}
+        <Route path="/carrito" element={<CarritoView />} />
+        <Route path="/checkout" element={<CheckoutView />} />
+        <Route path="/pago-exitoso/:id" element={<PagoExitosoView />} />
+        <Route path="/pago-error/:id" element={<PagoErrorView />} />
+
         <Route path="*" element={<NoEncontradoView />} />
       </Route>
     </Routes>

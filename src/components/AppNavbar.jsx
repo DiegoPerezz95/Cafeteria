@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { Button, Container, Form, Nav, Navbar, NavDropdown } from 'react-bootstrap'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import { useCarrito } from '../context/CarritoContext'
 import { formatearPrecio, obtenerCategorias } from '../data/datos'
 
 function AppNavbar() {
   const [busqueda, setBusqueda] = useState('')
   const { total, totalProductos } = useCarrito()
+  const { usuario, cerrarSesion } = useAuth()
   const navigate = useNavigate()
   const categorias = obtenerCategorias()
 
@@ -14,6 +16,11 @@ function AppNavbar() {
   function buscar(event) {
     event.preventDefault()
     navigate(`/productos?q=${encodeURIComponent(busqueda.trim())}`)
+  }
+
+  function salir() {
+    cerrarSesion()
+    navigate('/')
   }
 
   return (
@@ -56,9 +63,23 @@ function AppNavbar() {
             <Button type="submit" variant="outline-light">Buscar</Button>
           </Form>
 
-          <Button as={Link} to="/carrito" variant="success">
+          <Button as={Link} to="/carrito" variant="success" className="me-lg-2 mb-2 mb-lg-0">
             🛒 Carrito ({totalProductos}) {formatearPrecio(total)}
           </Button>
+
+          {/* Renderizado condicional: cambia según si hay sesión iniciada */}
+          {usuario ? (
+            <NavDropdown title={`Hola, ${usuario.nombre}`} id="menu-usuario" align="end">
+              <NavDropdown.ItemText className="small text-muted">{usuario.correo}</NavDropdown.ItemText>
+              <NavDropdown.Divider />
+              <NavDropdown.Item onClick={salir}>Cerrar sesión</NavDropdown.Item>
+            </NavDropdown>
+          ) : (
+            <div className="d-flex gap-2">
+              <Button as={Link} to="/login" variant="outline-light">Iniciar sesión</Button>
+              <Button as={Link} to="/registro" variant="light">Crear cuenta</Button>
+            </div>
+          )}
         </Navbar.Collapse>
       </Container>
     </Navbar>
