@@ -4,14 +4,17 @@ import { BrowserRouter } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './styles.css'
 import App from './App.jsx'
+import { AuthProvider } from './context/AuthContext.jsx'
 import { CarritoProvider } from './context/CarritoContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <CarritoProvider>
-        <App />
-      </CarritoProvider>
+      <AuthProvider>
+        <CarritoProvider>
+          <App />
+        </CarritoProvider>
+      </AuthProvider>
     </BrowserRouter>
   </StrictMode>,
 )
