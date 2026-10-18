@@ -95,3 +95,29 @@ body {
   font-size: 2.5rem;
   margin-bottom: 8px;
 }
+
+/* ===== Panel de administrador ===== */
+.admin-sidebar {
+  background: white;
+  border-right: 1px solid #eadfce;
+}
+
+.admin-sidebar .nav-link {
+  color: var(--cafe-oscuro);
+}
+
+.admin-sidebar .nav-link.active {
+  background: var(--cafe-oscuro);
+  color: white;
+  text-decoration: none;
+}
+
+/* Al imprimir la boleta, ocultamos menús y botones */
+@media print {
+  .navbar,
+  .admin-sidebar,
+  .footer-cafe,
+  .btn {
+    display: none !important;
+  }
+}
