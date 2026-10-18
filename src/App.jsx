@@ -16,6 +16,19 @@ import CheckoutView from './views/CheckoutView'
 import PagoExitosoView from './views/PagoExitosoView'
 import PagoErrorView from './views/PagoErrorView'
 import NoEncontradoView from './views/NoEncontradoView'
+import AdminLayout from './components/admin/AdminLayout'
+import AdminDashboardView from './views/admin/AdminDashboardView'
+import AdminOrdenesView from './views/admin/AdminOrdenesView'
+import AdminBoletaView from './views/admin/AdminBoletaView'
+import AdminProductosView from './views/admin/AdminProductosView'
+import AdminProductoDetalleView from './views/admin/AdminProductoDetalleView'
+import AdminProductoFormView from './views/admin/AdminProductoFormView'
+import AdminCategoriasView from './views/admin/AdminCategoriasView'
+import AdminUsuariosView from './views/admin/AdminUsuariosView'
+import AdminUsuarioDetalleView from './views/admin/AdminUsuarioDetalleView'
+import AdminUsuarioFormView from './views/admin/AdminUsuarioFormView'
+import AdminReportesView from './views/admin/AdminReportesView'
+import AdminPerfilView from './views/admin/AdminPerfilView'
 
 function App() {
   return (
@@ -44,6 +57,25 @@ function App() {
         <Route path="/pago-error/:id" element={<PagoErrorView />} />
 
         <Route path="*" element={<NoEncontradoView />} />
+      </Route>
+
+      {/* Panel de administrador: AdminLayout revisa que el usuario sea admin */}
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<AdminDashboardView />} />
+        <Route path="ordenes" element={<AdminOrdenesView />} />
+        <Route path="ordenes/:id" element={<AdminBoletaView />} />
+        <Route path="productos" element={<AdminProductosView />} />
+        <Route path="productos/criticos" element={<AdminProductosView soloCriticos />} />
+        <Route path="productos/nuevo" element={<AdminProductoFormView />} />
+        <Route path="productos/:id" element={<AdminProductoDetalleView />} />
+        <Route path="productos/:id/editar" element={<AdminProductoFormView />} />
+        <Route path="categorias" element={<AdminCategoriasView />} />
+        <Route path="usuarios" element={<AdminUsuariosView />} />
+        <Route path="usuarios/nuevo" element={<AdminUsuarioFormView />} />
+        <Route path="usuarios/:id" element={<AdminUsuarioDetalleView />} />
+        <Route path="usuarios/:id/editar" element={<AdminUsuarioFormView />} />
+        <Route path="reportes" element={<AdminReportesView />} />
+        <Route path="perfil" element={<AdminPerfilView />} />
       </Route>
     </Routes>
   )

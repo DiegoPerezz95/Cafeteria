@@ -1,11 +1,17 @@
-# Café Aroma — React + Vite
+# ☕ Café Aroma — Tienda online en React + Vite
 
-Aplicación de una cafetería hecha con React y Vite, basada en la estructura del proyecto de las 6 clases.
+Proyecto de la Evaluación Parcial 2 (DSY1104). Es la tienda online de la cafetería **Café Aroma**,
+con una parte pública para clientes y un panel de administración.
 
-Incluye React Bootstrap, React Router, componentes reutilizables con props, state con `useState`,
-`useEffect`, formularios controlados, localStorage, sessionStorage y pruebas unitarias con Vitest.
+## Tecnologías
 
-## Ejecutar
+- **React 19 + Vite**
+- **React Router**: navegación entre páginas
+- **React Bootstrap**: diseño responsive (celular, tablet y escritorio)
+- **localStorage**: persistencia de datos (simula una base de datos)
+- **Vitest + Testing Library**: pruebas unitarias y cobertura
+
+## Cómo ejecutar
 
 ```bash
 npm install
@@ -18,54 +24,78 @@ En EC2:
 npm run dev -- --host 0.0.0.0
 ```
 
-## Páginas
+## Usuarios de prueba
 
-| Ruta | Vista | Qué muestra |
+| Rol | Correo | Contraseña |
 |---|---|---|
-| `/` | `HomeView` | Bienvenida, horario y contador de tazas |
-| `/menu` | `MenuView` | Menú de la cafetería con tarjetas `PlatoCard` |
-| `/reserva` | `ReservaView` | Formulario de reserva guardado en localStorage |
-| `/nosotros` | `NosotrosView` | Historia del local y tarjetas del equipo (`BaristaCard`) |
-| `/contacto` | `ContactoView` | Formulario de contacto que guarda una lista de mensajes |
+| Administrador | admin@cafearoma.cl | admin123 |
+| Cliente | cliente@cafearoma.cl | cliente123 |
+
+## Vistas
+
+### Tienda (pública)
+
+| Ruta | Vista |
+|---|---|
+| `/` | Inicio: carrusel, categorías y productos destacados |
+| `/productos` | Catálogo con búsqueda, filtro por categoría y orden por precio |
+| `/productos/:id` | Detalle de producto |
+| `/categorias` y `/categorias/:id` | Productos separados por categoría |
+| `/ofertas` | Productos en oferta |
+| `/nosotros` | Historia y equipo |
+| `/blog` y `/blog/:id` | Blog y detalle de cada publicación |
+| `/contacto` | Formulario de contacto |
+| `/registro` | Crear cuenta |
+| `/login` | Iniciar sesión |
+| `/carrito` | Carrito de compras |
+| `/checkout` | Datos del cliente y dirección de entrega |
+| `/pago-exitoso/:id` | Compra realizada |
+| `/pago-error/:id` | Pago rechazado |
+
+### Administrador (requiere iniciar sesión como admin)
+
+| Ruta | Vista |
+|---|---|
+| `/admin` | Dashboard |
+| `/admin/ordenes` y `/admin/ordenes/:id` | Órdenes y boleta |
+| `/admin/productos` | Listado, crear, ver, editar y eliminar productos |
+| `/admin/productos/criticos` | Productos con stock crítico |
+| `/admin/categorias` | Crear, editar y eliminar categorías |
+| `/admin/usuarios` | Listado, crear, ver, editar y eliminar usuarios + historial de compras |
+| `/admin/reportes` | Ventas por producto y por categoría |
+| `/admin/perfil` | Perfil del administrador |
 
 ## Estructura
 
 ```text
 src/
-├── components/
-│   ├── AppNavbar.jsx
-│   ├── BaristaCard.jsx
-│   ├── ContadorTazas.jsx
-│   ├── PanelReserva.jsx
-│   └── PlatoCard.jsx
-├── views/
-│   ├── ContactoView.jsx
-│   ├── HomeView.jsx
-│   ├── MenuView.jsx
-│   ├── NosotrosView.jsx
-│   └── ReservaView.jsx
-├── tests/
-│   ├── setup.js
-│   ├── ContactoView.test.jsx
-│   ├── ContadorTazas.test.jsx
-│   ├── NosotrosView.test.jsx
-│   ├── PlatoCard.test.jsx
-│   └── ReservaView.test.jsx
-├── App.jsx
-├── main.jsx
-└── styles.css
+├── data/datos.js           # "Base de datos" simulada + funciones CRUD
+├── context/
+│   ├── CarritoContext.jsx  # Estado global del carrito
+│   └── AuthContext.jsx     # Sesión del usuario
+├── components/             # Componentes reutilizables (tarjetas, formularios, layout)
+│   └── admin/              # Componentes del panel de administración
+├── views/                  # Una vista por página de la tienda
+│   └── admin/              # Vistas del panel de administración
+├── tests/                  # Pruebas unitarias con Vitest
+├── App.jsx                 # Rutas
+└── main.jsx                # Punto de entrada
 ```
 
-## Pruebas incluidas con Vitest
-
-- `ContadorTazas.test.jsx`: estado inicial, sumar una taza y que no baje de cero.
-- `PlatoCard.test.jsx`: props y callback simulado con `vi.fn()`.
-- `ReservaView.test.jsx`: guardar la reserva en `localStorage` y cancelarla.
-- `NosotrosView.test.jsx`: una tarjeta por cada integrante (lista con `.map()`).
-- `ContactoView.test.jsx`: enviar un mensaje y guardarlo en una lista en `localStorage`.
+## Pruebas
 
 ```bash
-npm test
-npm run test:run
-npm run coverage
+npm test            # modo observador
+npm run test:run    # una sola vez
+npm run coverage    # reporte de cobertura (carpeta coverage/)
 ```
+
+Las pruebas cubren:
+
+- **Renderizado**: listas de productos, carrito, historial de compras.
+- **Renderizado condicional**: mensajes de error en login y formularios, aviso de carrito vacío,
+  acceso denegado al panel, campo de precio de oferta.
+- **Props**: `ProductoCard` y `ProductoForm` reciben datos y funciones (`vi.fn()`).
+- **Estado**: formularios que cambian al escribir, cantidades del carrito.
+- **Eventos**: clics en botones (añadir, eliminar, pagar) y envío de formularios.
+- **Lógica CRUD**: crear, leer, actualizar y eliminar en `datos.js`.

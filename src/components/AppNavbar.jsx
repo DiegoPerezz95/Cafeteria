@@ -8,7 +8,7 @@ import { formatearPrecio, obtenerCategorias } from '../data/datos'
 function AppNavbar() {
   const [busqueda, setBusqueda] = useState('')
   const { total, totalProductos } = useCarrito()
-  const { usuario, cerrarSesion } = useAuth()
+  const { usuario, esAdmin, cerrarSesion } = useAuth()
   const navigate = useNavigate()
   const categorias = obtenerCategorias()
 
@@ -72,6 +72,9 @@ function AppNavbar() {
             <NavDropdown title={`Hola, ${usuario.nombre}`} id="menu-usuario" align="end">
               <NavDropdown.ItemText className="small text-muted">{usuario.correo}</NavDropdown.ItemText>
               <NavDropdown.Divider />
+              {esAdmin && (
+                <NavDropdown.Item as={Link} to="/admin">⚙️ Panel de administrador</NavDropdown.Item>
+              )}
               <NavDropdown.Item onClick={salir}>Cerrar sesión</NavDropdown.Item>
             </NavDropdown>
           ) : (
