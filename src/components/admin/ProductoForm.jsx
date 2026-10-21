@@ -1,143 +1,127 @@
-import { useState } from 'react'
-import { Button, Col, Form, Row } from 'react-bootstrap'
-import { obtenerCategorias } from '../../data/datos'
+import { useState } from "react";
+import { Form, Button } from "react-bootstrap"; // Dejamos solo esta línea
+import { obtenerCategorias } from '../../data/datos'; // <-- AGREGA ESTO
 
-const PRODUCTO_VACIO = {
-  nombre: '',
-  descripcion: '',
-  categoriaId: '',
-  precio: '',
-  stock: '',
-  emoji: '☕',
-  oferta: false,
-  precioOferta: '',
-  destacado: false,
-}
-
-export function validarProducto(datos) {
-  const errores = {}
-  if (!datos.nombre.trim()) errores.nombre = 'El nombre es obligatorio.'
-  if (!datos.categoriaId) errores.categoriaId = 'Elige una categoría.'
-  if (!(Number(datos.precio) > 0)) errores.precio = 'El precio debe ser mayor a 0.'
-  if (datos.stock === '' || Number(datos.stock) < 0) errores.stock = 'El stock no puede ser negativo.'
-  if (datos.oferta) {
-    const oferta = Number(datos.precioOferta)
-    if (!(oferta > 0) || oferta >= Number(datos.precio)) {
-      errores.precioOferta = 'El precio de oferta debe ser menor al precio normal.'
-    }
-  }
-  return errores
-}
-
-// Formulario reutilizable: sirve para crear y para editar productos.
-// Recibe los datos iniciales por props y avisa al padre con onGuardar.
-function ProductoForm({ productoInicial, onGuardar, textoBoton = 'Guardar' }) {
-  const [formulario, setFormulario] = useState({ ...PRODUCTO_VACIO, ...productoInicial })
-  const [errores, setErrores] = useState({})
-  const categorias = obtenerCategorias()
-
-  function cambiar(event) {
-    const { name, value, type, checked } = event.target
-    setFormulario({ ...formulario, [name]: type === 'checkbox' ? checked : value })
-  }
-
-  function enviar(event) {
-    event.preventDefault()
-    const encontrados = validarProducto(formulario)
-    setErrores(encontrados)
-    if (Object.keys(encontrados).length > 0) return
-
-    onGuardar({
-      ...formulario,
-      precio: Number(formulario.precio),
-      stock: Number(formulario.stock),
-      categoriaId: Number(formulario.categoriaId),
-      precioOferta: formulario.oferta ? Number(formulario.precioOferta) : 0,
+function ProductoForm(props) {
+    const [formulario, setFormulario] = useState({
+        nombre: '',
+        precio: '',
+        categoriaId:'',
+        stock:'',
+        ...props.productoInicial
     })
-  }
 
-  return (
-    <Form onSubmit={enviar} noValidate>
-      <Row className="g-3">
-        <Col md={8}>
-          <Form.Group controlId="nombreProducto">
-            <Form.Label>Nombre</Form.Label>
-            <Form.Control name="nombre" value={formulario.nombre} onChange={cambiar} isInvalid={!!errores.nombre} />
-            <Form.Control.Feedback type="invalid">{errores.nombre}</Form.Control.Feedback>
-          </Form.Group>
-        </Col>
-        <Col md={4}>
-          <Form.Group controlId="emojiProducto">
-            <Form.Label>Ícono (emoji)</Form.Label>
-            <Form.Control name="emoji" value={formulario.emoji} onChange={cambiar} />
-          </Form.Group>
-        </Col>
-        <Col md={12}>
-          <Form.Group controlId="descripcionProducto">
-            <Form.Label>Descripción</Form.Label>
-            <Form.Control as="textarea" rows={2} name="descripcion" value={formulario.descripcion} onChange={cambiar} />
-          </Form.Group>
-        </Col>
-        <Col md={4}>
-          <Form.Group controlId="categoriaProducto">
-            <Form.Label>Categoría</Form.Label>
-            <Form.Select name="categoriaId" value={formulario.categoriaId} onChange={cambiar} isInvalid={!!errores.categoriaId}>
-              <option value="">Selecciona...</option>
-              {categorias.map((c) => (
-                <option key={c.id} value={c.id}>{c.nombre}</option>
-              ))}
-            </Form.Select>
-            <Form.Control.Feedback type="invalid">{errores.categoriaId}</Form.Control.Feedback>
-          </Form.Group>
-        </Col>
-        <Col md={4}>
-          <Form.Group controlId="precioProducto">
-            <Form.Label>Precio</Form.Label>
-            <Form.Control type="number" name="precio" value={formulario.precio} onChange={cambiar} isInvalid={!!errores.precio} />
-            <Form.Control.Feedback type="invalid">{errores.precio}</Form.Control.Feedback>
-          </Form.Group>
-        </Col>
-        <Col md={4}>
-          <Form.Group controlId="stockProducto">
-            <Form.Label>Stock</Form.Label>
-            <Form.Control type="number" name="stock" value={formulario.stock} onChange={cambiar} isInvalid={!!errores.stock} />
-            <Form.Control.Feedback type="invalid">{errores.stock}</Form.Control.Feedback>
-          </Form.Group>
-        </Col>
-        <Col md={4}>
-          <Form.Check
-            type="switch"
-            id="ofertaProducto"
-            name="oferta"
-            label="En oferta"
-            checked={formulario.oferta}
-            onChange={cambiar}
-          />
-          <Form.Check
-            type="switch"
-            id="destacadoProducto"
-            name="destacado"
-            label="Destacado en el inicio"
-            checked={formulario.destacado}
-            onChange={cambiar}
-          />
-        </Col>
+    // NUEVA MEMORIA PARA ERRORES:
+    const [errores, setErrores] = useState({})
+    //
+    const categorias = obtenerCategorias()
 
-        {/* Este campo solo aparece si el producto está en oferta */}
-        {formulario.oferta && (
-          <Col md={4}>
-            <Form.Group controlId="precioOfertaProducto">
-              <Form.Label>Precio de oferta</Form.Label>
-              <Form.Control type="number" name="precioOferta" value={formulario.precioOferta} onChange={cambiar} isInvalid={!!errores.precioOferta} />
-              <Form.Control.Feedback type="invalid">{errores.precioOferta}</Form.Control.Feedback>
+    // FUNCIÓN 1: Solo para cuando el usuario teclea
+    function cambiarTexto(event){
+        const { name, value } = event.target
+        setFormulario({
+            ...formulario, 
+            [name]: value  
+        })
+    }
+
+    // FUNCIÓN 2: NUEVA - Solo para cuando el usuario presiona el botón "Guardar"
+    function enviarFormulario(event) {
+        event.preventDefault()
+        
+        // 1. Creamos una libreta temporal de errores
+        const encontrados = {}
+        
+        // 2. Revisamos las reglas
+        if (formulario.nombre.trim() === '') {
+            encontrados.nombre = 'El nombre no puede estar vacío'
+        }
+        if (Number(formulario.precio) <= 0) {
+            encontrados.precio = 'El precio debe ser mayor a 0'
+        }
+
+        // 3. Guardamos los errores en nuestra memoria para que la pantalla los muestre
+        setErrores(encontrados)
+
+        // 4. Si encontramos algún error, detenemos la función aquí mismo con "return"
+        if (Object.keys(encontrados).length > 0) {
+            return 
+        }
+
+        // 5. Si pasamos todas las pruebas, llamamos al jefe
+        props.onGuardar(formulario) 
+    }
+
+    return(
+        <Form onSubmit={enviarFormulario} className="p-4 bg-white rounded text-dark">
+            <h2> Creando formulario </h2> 
+
+            <Form.Group className="mb-3">
+                <Form.Label>Nombre del producto</Form.Label>
+                <Form.Control
+                    type="text"
+                    name="nombre"
+                    value={formulario.nombre}
+                    onChange={cambiarTexto}
+                    placeholder="Escribe un nombre"
+                    isInvalid={!!errores.nombre} // <-- Pone el borde rojo si hay error
+                />
+                <Form.Control.Feedback type="invalid">
+                    {errores.nombre} {/* <-- Muestra el mensaje de error */}
+                </Form.Control.Feedback>
             </Form.Group>
-          </Col>
-        )}
-      </Row>
 
-      <Button type="submit" variant="success" className="mt-4">{textoBoton}</Button>
-    </Form>
-  )
+            <Form.Group className="mb-3">
+                <Form.Label>Precio</Form.Label>
+                <Form.Control
+                    type="number"
+                    name="precio"
+                    value={formulario.precio}
+                    onChange={cambiarTexto}
+                    placeholder="Escribe el precio"
+                    isInvalid={!!errores.precio} // <-- Pone el borde rojo si hay error
+                />
+                <Form.Control.Feedback type="invalid">
+                    {errores.precio} {/* <-- Muestra el mensaje de error */}
+                </Form.Control.Feedback>
+            </Form.Group>
+            
+
+            <Form.Group className="mb-3">
+                <Form.Label>Categoría</Form.Label>
+                <Form.Select
+                    name="categoriaId"
+                    value={formulario.categoriaId}
+                    onChange={cambiarTexto}
+                >
+                    <option value="">Selecciona...</option>
+                    {categorias.map((c) => (
+                        <option key={c.id} value={c.id}>{c.nombre}</option>
+                    ))}
+                </Form.Select>
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+                <Form.Label>Stock</Form.Label>
+                <Form.Control
+                    type="number"
+                    name="stock"
+                    value={formulario.stock}
+                    onChange={cambiarTexto}
+                    placeholder="Escribe el stock"
+                />
+            </Form.Group>
+
+            <p>Producto: <strong className="text-primary">{formulario.nombre}</strong></p>
+            <p>Precio: <strong className="text-success">${formulario.precio}</strong></p>
+            <p>CategoriaId: <strong className="text-success">{formulario.categoriaId}</strong></p>
+            <p>Stock: <strong className="text-success">{formulario.stock}</strong></p>
+
+            <Button type="submit" variant="success" className="mt-3">
+                Guardar Producto
+            </Button>
+        </Form>
+    )
 }
 
 export default ProductoForm
