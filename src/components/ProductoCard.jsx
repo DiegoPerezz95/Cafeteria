@@ -21,8 +21,10 @@ function ProductoCard({ producto, onAgregar }) {
         </div>
 
         <Card.Title>{producto.nombre}</Card.Title>
-        <Card.Text className="text-muted small flex-grow-1">{producto.descripcion}</Card.Text>
+                <Card.Text className="text-muted small flex-grow-1">{producto.descripcion}</Card.Text>
 
+        <Card.Text className="small mb-2">Stock: {producto.stock}</Card.Text>
+        
         <div className="mb-3">
           {producto.oferta && (
             <span className="text-muted text-decoration-line-through me-2">

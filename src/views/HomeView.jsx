@@ -6,7 +6,7 @@ import { obtenerCategorias, obtenerDestacados } from '../data/datos'
 
 const banners = [
   { emoji: '☕', titulo: 'Café de especialidad', texto: 'Tostado en casa cada semana.' },
-  { emoji: '🥧', titulo: 'Nuevo kuchen de frambuesa', texto: 'Míralo en la sección de ofertas.' },
+  { emoji: '🥧', titulo: ' Nuevo kuchen de frambuesa', texto: 'Míralo en la sección de ofertas.' },
   { emoji: '🧋', titulo: 'Bebidas frías', texto: 'Para los días de calor.' },
 ]
 
